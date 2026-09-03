@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Меню — админка · УГОЛЬ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="wrap admin-top">
+  <div class="admin-title">УГОЛЬ<span>Управление меню</span></div>
+  <a href="index.html">← На сайт</a>
+</div>
+
+<main class="wrap admin-section">
+
+  <div class="token-card" id="token-card">
+    <h2>Подключение к GitHub</h2>
+    <p class="admin-lede">Чтобы сохранять изменения прямо на сайт, нужен личный токен доступа GitHub. Он останется только в этом браузере — никуда, кроме api.github.com, не отправляется.</p>
+    <ol>
+      <li>Откройте <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">страницу создания токена</a> (нужно быть залогинены в GitHub под тем же аккаунтом, что владеет репозиторием).</li>
+      <li>В поле <code>Repository access</code> выберите <code>Only select repositories</code> → <code>ugol-burgers</code>.</li>
+      <li>В <code>Permissions → Repository permissions → Contents</code> выберите <code>Read and write</code>.</li>
+      <li>Нажмите <code>Generate token</code> и скопируйте его — он покажется только один раз.</li>
+      <li>Вставьте токен в поле ниже.</li>
+    </ol>
+    <div class="token-row">
+      <input type="password" id="token-input" placeholder="github_pat_..." autocomplete="off">
+      <button type="button" class="btn btn-primary" id="token-save-btn">Сохранить и войти</button>
+    </div>
+    <p class="token-note">Токен хранится в localStorage только этого браузера. Не открывайте эту страницу с чужого компьютера, не выйдя перед этим («Сменить токен» внизу после входа).</p>
+  </div>
+
+  <div id="editor-card" hidden>
+    <div class="admin-status" id="admin-status"></div>
+
+    <div class="admin-toolbar">
+      <p class="admin-lede" style="margin:0;">Правьте товары ниже и нажмите «Сохранить изменения» — сайт обновится сам за 30–60 секунд.</p>
+      <button type="button" class="admin-forget" id="admin-forget-btn">Сменить токен</button>
+    </div>
+
+    <div class="admin-list" id="admin-list"></div>
+
+    <button type="button" class="btn admin-add" id="admin-add-btn">+ Добавить товар</button>
+
+    <div class="admin-save-bar">
+      <span class="token-note" style="margin:0;">Изменения уходят напрямую в репозиторий на GitHub.</span>
+      <button type="button" class="btn btn-primary" id="admin-save-btn">Сохранить изменения</button>
+    </div>
+  </div>
+
+</main>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

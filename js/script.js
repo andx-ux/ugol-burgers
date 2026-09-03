@@ -23,20 +23,6 @@
     });
   });
 
-  var menuChips = document.querySelectorAll('#menu-filters .chip');
-  var cards = document.querySelectorAll('.menu-card');
-  menuChips.forEach(function(c){
-    c.addEventListener('click', function(){
-      menuChips.forEach(function(x){x.classList.remove('active');});
-      c.classList.add('active');
-      var cat = c.getAttribute('data-cat');
-      cards.forEach(function(card){
-        var show = cat === 'all' || card.getAttribute('data-cat') === cat;
-        card.classList.toggle('is-hidden', !show);
-      });
-    });
-  });
-
   var track = document.getElementById('testi-track');
   document.getElementById('testi-next').addEventListener('click', function(){
     track.scrollBy({left: 360, behavior:'smooth'});
@@ -87,8 +73,31 @@
   }
 })();
 
+/* ---------- Everything below needs the menu cards to exist first,
+   so it waits for menu-data.js to finish rendering them. ---------- */
+document.addEventListener('menu:rendered', function(){
+  initMenuFilters();
+  initCart();
+});
+
+function initMenuFilters(){
+  var menuChips = document.querySelectorAll('#menu-filters .chip');
+  var cards = document.querySelectorAll('.menu-card');
+  menuChips.forEach(function(c){
+    c.addEventListener('click', function(){
+      menuChips.forEach(function(x){x.classList.remove('active');});
+      c.classList.add('active');
+      var cat = c.getAttribute('data-cat');
+      cards.forEach(function(card){
+        var show = cat === 'all' || card.getAttribute('data-cat') === cat;
+        card.classList.toggle('is-hidden', !show);
+      });
+    });
+  });
+}
+
 /* ---------- CART / ORDER ---------- */
-(function(){
+function initCart(){
   // TODO: замените на реальный username Telegram-аккаунта бургерной (без @)
   var TELEGRAM_USERNAME = 'ugol_orders';
   var STORAGE_KEY = 'ugol_cart_v1';
@@ -338,4 +347,4 @@
   });
 
   renderAll();
-})();
+}
