@@ -24,10 +24,16 @@
   });
 
   var chips = document.querySelectorAll('.chip');
+  var cards = document.querySelectorAll('.menu-card');
   chips.forEach(function(c){
     c.addEventListener('click', function(){
       chips.forEach(function(x){x.classList.remove('active');});
       c.classList.add('active');
+      var cat = c.getAttribute('data-cat');
+      cards.forEach(function(card){
+        var show = cat === 'all' || card.getAttribute('data-cat') === cat;
+        card.classList.toggle('is-hidden', !show);
+      });
     });
   });
 
