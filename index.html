@@ -23,7 +23,11 @@
       <a href="#journal">Журнал</a>
     </nav>
     <div style="display:flex;gap:10px;align-items:center;">
-      <a href="#menu" class="btn btn-ghost">Заказать</a>
+      <a href="#menu" class="btn btn-ghost">Меню</a>
+      <button class="cart-toggle" id="cart-toggle" aria-label="Открыть корзину" aria-haspopup="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="cart-count" id="cart-count" hidden>0</span>
+      </button>
       <button class="nav-toggle" id="nav-toggle" aria-label="Открыть меню" aria-expanded="false">☰</button>
     </div>
   </div>
@@ -149,7 +153,7 @@
           <p class="eyebrow">На гриле сегодня</p>
           <h2 style="margin-top:14px;">Меню</h2>
         </div>
-        <div class="menu-filters">
+        <div class="menu-filters" id="menu-filters">
           <button class="chip active" data-cat="all">Все</button>
           <button class="chip" data-cat="burgers">Бургеры</button>
           <button class="chip" data-cat="sides">Сайды</button>
@@ -166,6 +170,7 @@
             <h3>Дабл Смэш</h3>
             <p class="tag">Две котлеты смэш по 90 г, двойной чеддер, угольный соус</p>
             <div class="row"><span class="price">490 ₽</span><span class="weight">280 Г</span></div>
+            <div class="cart-add" data-id="dabl-smash" data-name="Дабл Смэш" data-price="490"></div>
           </div>
         </div>
         <div class="menu-card" data-cat="burgers">
@@ -174,6 +179,7 @@
             <h3>Классик Чизбургер</h3>
             <p class="tag">Котлета 180 г, чеддер, маринованный лук</p>
             <div class="row"><span class="price">390 ₽</span><span class="weight">180 Г</span></div>
+            <div class="cart-add" data-id="classic" data-name="Классик Чизбургер" data-price="390"></div>
           </div>
         </div>
         <div class="menu-card" data-cat="burgers">
@@ -182,6 +188,7 @@
             <h3>Бекон BBQ</h3>
             <p class="tag">Хрустящий бекон, копчёный BBQ-соус, лук кольцами</p>
             <div class="row"><span class="price">450 ₽</span><span class="weight">220 Г</span></div>
+            <div class="cart-add" data-id="bacon-bbq" data-name="Бекон BBQ" data-price="450"></div>
           </div>
         </div>
         <div class="menu-card" data-cat="burgers">
@@ -190,6 +197,7 @@
             <h3>Халапеньо Файр</h3>
             <p class="tag">Свежий халапеньо, острый соус, пеппер джек</p>
             <div class="row"><span class="price">430 ₽</span><span class="weight">200 Г</span></div>
+            <div class="cart-add" data-id="jalapeno" data-name="Халапеньо Файр" data-price="430"></div>
           </div>
         </div>
         <div class="menu-card" data-cat="burgers">
@@ -198,6 +206,7 @@
             <h3>Пиклбургер</h3>
             <p class="tag">Двойные солёные огурцы, горчичный майонез</p>
             <div class="row"><span class="price">410 ₽</span><span class="weight">190 Г</span></div>
+            <div class="cart-add" data-id="pickle" data-name="Пиклбургер" data-price="410"></div>
           </div>
         </div>
         <div class="menu-card" data-cat="sides">
@@ -206,6 +215,7 @@
             <h3>Картофель фри на говяжьем жире</h3>
             <p class="tag">Хрустящая корочка, крупная соль</p>
             <div class="row"><span class="price">220 ₽</span><span class="weight">180 Г</span></div>
+            <div class="cart-add" data-id="fries" data-name="Картофель фри" data-price="220"></div>
           </div>
         </div>
         <div class="menu-card" data-cat="sides">
@@ -214,6 +224,7 @@
             <h3>Кольца лука в темпуре</h3>
             <p class="tag">Хрустящая панировка, соус чипотле</p>
             <div class="row"><span class="price">240 ₽</span><span class="weight">160 Г</span></div>
+            <div class="cart-add" data-id="onion-rings" data-name="Кольца лука в темпуре" data-price="240"></div>
           </div>
         </div>
         <div class="menu-card" data-cat="drinks">
@@ -222,6 +233,7 @@
             <h3>Молочный шейк с карамелью</h3>
             <p class="tag">Пломбир, солёная карамель, взбитые сливки</p>
             <div class="row"><span class="price">280 ₽</span><span class="weight">400 МЛ</span></div>
+            <div class="cart-add" data-id="shake" data-name="Молочный шейк с карамелью" data-price="280"></div>
           </div>
         </div>
       </div>
@@ -404,6 +416,61 @@
     </div>
   </div>
 </footer>
+
+<div class="cart-overlay" id="cart-overlay" hidden></div>
+<aside class="cart-drawer" id="cart-drawer" aria-hidden="true">
+  <div class="cart-head">
+    <h3>Корзина</h3>
+    <button class="cart-close" id="cart-close" aria-label="Закрыть корзину">✕</button>
+  </div>
+
+  <div class="cart-panel" id="cart-panel-items">
+    <div class="cart-empty" id="cart-empty">Пока пусто — добавьте что-нибудь из меню.</div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-summary">
+      <div class="cart-total-row"><span>Итого</span><b id="cart-total">0 ₽</b></div>
+      <button type="button" class="btn btn-primary cart-full" id="cart-checkout-btn" disabled>Оформить заказ</button>
+    </div>
+  </div>
+
+  <form class="cart-panel" id="cart-panel-checkout" hidden novalidate>
+    <button type="button" class="cart-back" id="cart-back-btn">← Назад в корзину</button>
+    <div class="field">
+      <label for="cf-name">Имя</label>
+      <input type="text" id="cf-name" name="name" autocomplete="name" required>
+    </div>
+    <div class="field">
+      <label for="cf-phone">Телефон</label>
+      <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="+7 900 000-00-00" required>
+    </div>
+    <div class="field">
+      <span class="field-label">Получение</span>
+      <div class="menu-filters" id="method-filters">
+        <button type="button" class="chip active" data-method="pickup">Самовывоз</button>
+        <button type="button" class="chip" data-method="delivery">Доставка</button>
+      </div>
+    </div>
+    <div class="field" id="cf-address-field" hidden>
+      <label for="cf-address">Адрес доставки</label>
+      <input type="text" id="cf-address" name="address" autocomplete="street-address">
+    </div>
+    <div class="field">
+      <label for="cf-comment">Комментарий</label>
+      <input type="text" id="cf-comment" name="comment" placeholder="без лука, позвонить у входа...">
+    </div>
+    <p class="cart-note">Оплата при получении — наличными или картой курьеру/на кассе.</p>
+    <div class="cart-summary">
+      <div class="cart-total-row"><span>Итого</span><b id="checkout-total">0 ₽</b></div>
+      <button type="submit" class="btn btn-primary cart-full">Отправить заказ в Telegram</button>
+    </div>
+  </form>
+
+  <div class="cart-panel" id="cart-panel-done" hidden>
+    <p class="cart-done-text">Заказ сформирован. В открывшемся окне Telegram нажмите «Отправить» — и мы начнём готовить.</p>
+    <button type="button" class="btn btn-ghost cart-full" id="cart-copy-btn">Скопировать текст заказа</button>
+    <button type="button" class="btn btn-primary cart-full" id="cart-new-btn">Новый заказ</button>
+  </div>
+</aside>
 
 <script src="js/script.js"></script>
 </body>
