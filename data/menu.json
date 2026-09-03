@@ -73,5 +73,13 @@
     "price": 280,
     "weight": "400 МЛ",
     "photo": "https://images.unsplash.com/photo-1686638745403-d21193f16b2f?w=700&h=440&fit=crop&q=80&auto=format"
+  },
+  {
+    "id": "test-item-tmp",
+    "category": "sides",
+    "name": "ТЕСТ АДМИНКИ (удалить)",
+    "tag": "временная запись для проверки сохранения",
+    "price": 1,
+    "weight": "1 Г"
   }
 ]
