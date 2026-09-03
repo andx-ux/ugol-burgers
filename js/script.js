@@ -115,6 +115,7 @@
   var methodChips = document.querySelectorAll('#method-filters .chip');
   var copyBtn = document.getElementById('cart-copy-btn');
   var newOrderBtn = document.getElementById('cart-new-btn');
+  var clearBtn = document.getElementById('cart-clear-btn');
 
   if(!cartToggle || !cartDrawer) return;
 
@@ -177,6 +178,7 @@
     }
 
     var ids = Object.keys(cart);
+    clearBtn.hidden = ids.length === 0;
     if(ids.length === 0){
       cartEmptyEl.hidden = false;
       cartItemsEl.innerHTML = '';
@@ -189,10 +191,15 @@
         if(!meta) return '';
         var qty = cart[id];
         return '<div class="cart-item">' +
-          '<h4>' + meta.name + '</h4>' +
-          '<span class="cart-item-price">' + (meta.price * qty) + ' ₽</span>' +
-          '<div class="stepper"><button type="button" class="cart-dec" data-id="' + id + '">−</button><span>' + qty + '</span><button type="button" class="cart-inc" data-id="' + id + '">+</button></div>' +
-          '<button type="button" class="cart-item-remove" data-id="' + id + '">убрать</button>' +
+          '<div class="cart-item-top">' +
+            '<h4>' + meta.name + '</h4>' +
+            '<button type="button" class="cart-item-x" data-id="' + id + '" aria-label="Убрать ' + meta.name + '">×</button>' +
+          '</div>' +
+          '<div class="cart-item-bottom">' +
+            '<span class="cart-item-unit">' + meta.price + ' ₽ × ' + qty + '</span>' +
+            '<div class="stepper"><button type="button" class="cart-dec" data-id="' + id + '">−</button><span>' + qty + '</span><button type="button" class="cart-inc" data-id="' + id + '">+</button></div>' +
+            '<span class="cart-item-sum">' + (meta.price * qty) + ' ₽</span>' +
+          '</div>' +
           '</div>';
       }).join('');
     }
@@ -221,8 +228,14 @@
     if(inc){ changeQty(inc.getAttribute('data-id'), 1); return; }
     var dec = e.target.closest('.cart-dec');
     if(dec){ changeQty(dec.getAttribute('data-id'), -1); return; }
-    var rem = e.target.closest('.cart-item-remove');
+    var rem = e.target.closest('.cart-item-x');
     if(rem){ delete cart[rem.getAttribute('data-id')]; saveCart(cart); renderAll(); return; }
+  });
+
+  clearBtn.addEventListener('click', function(){
+    cart = {};
+    saveCart(cart);
+    renderAll();
   });
 
   function openDrawer(){
