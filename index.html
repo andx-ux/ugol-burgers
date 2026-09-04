@@ -371,6 +371,13 @@
       <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="+994 70 000-00-00" required>
     </div>
     <div class="field">
+      <span class="field-label">Оплата</span>
+      <div class="menu-filters" id="payment-filters">
+        <button type="button" class="chip active" data-payment="card">Картой онлайн</button>
+        <button type="button" class="chip" data-payment="cash">На месте</button>
+      </div>
+    </div>
+    <div class="field">
       <span class="field-label">Получение</span>
       <div class="menu-filters" id="method-filters">
         <button type="button" class="chip active" data-method="pickup">Самовывоз</button>
@@ -396,7 +403,7 @@
       <label for="cf-comment">Комментарий к заказу</label>
       <input type="text" id="cf-comment" name="comment" placeholder="позвонить у входа, без сдачи с 1000...">
     </div>
-    <p class="cart-note">Безопасная оплата картой через Stripe — Visa, Mastercard, Apple Pay, Google Pay.</p>
+    <p class="cart-note" id="checkout-note">Безопасная оплата картой через Stripe — Visa, Mastercard, Apple Pay, Google Pay.</p>
     <p class="checkout-error" id="checkout-error" hidden></p>
     <div class="cart-summary">
       <div class="cart-total-row"><span>Итого</span><b id="checkout-total">0,00 €</b></div>

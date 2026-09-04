@@ -256,12 +256,28 @@ function initCart(){
   var timeChips = document.querySelectorAll('#time-filters .chip');
   var timeField = document.getElementById('cf-time-field');
   var timeInput = document.getElementById('cf-time');
+  var paymentChips = document.querySelectorAll('#payment-filters .chip');
+  var checkoutNote = document.getElementById('checkout-note');
   var clearBtn = document.getElementById('cart-clear-btn');
 
   if(!cartToggle || !cartDrawer) return;
 
   var currentMethod = 'pickup';
   var currentTimeMode = 'now';
+  var currentPayment = 'card';
+
+  var PAYMENT_ENDPOINTS = {
+    card: '/api/create-checkout-session',
+    cash: '/api/submit-order'
+  };
+  var PAYMENT_NOTES = {
+    card: 'Безопасная оплата картой через Stripe — Visa, Mastercard, Apple Pay, Google Pay.',
+    cash: 'Оплата наличными или картой курьеру — при доставке, либо на кассе при самовывозе.'
+  };
+  var PAYMENT_BUTTON_LABELS = {
+    card: 'Оплатить картой',
+    cash: 'Оформить заказ'
+  };
 
   document.addEventListener('click', function(e){
     var addBtn = e.target.closest('.cart-add-btn');
@@ -336,9 +352,21 @@ function initCart(){
     });
   });
 
+  paymentChips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      paymentChips.forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      currentPayment = chip.getAttribute('data-payment');
+      checkoutNote.textContent = PAYMENT_NOTES[currentPayment];
+      payBtn.textContent = PAYMENT_BUTTON_LABELS[currentPayment];
+    });
+  });
+
+  var progressLabels = {card: 'Переходим к оплате…', cash: 'Отправляем заказ…'};
+
   function setPaying(paying){
     payBtn.disabled = paying;
-    payBtn.textContent = paying ? 'Переходим к оплате…' : 'Оплатить картой';
+    payBtn.textContent = paying ? progressLabels[currentPayment] : PAYMENT_BUTTON_LABELS[currentPayment];
   }
 
   panelCheckout.addEventListener('submit', function(e){
@@ -362,7 +390,7 @@ function initCart(){
     };
 
     setPaying(true);
-    fetch('/api/create-checkout-session', {
+    fetch(PAYMENT_ENDPOINTS[currentPayment], {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload)
@@ -370,14 +398,14 @@ function initCart(){
       .then(function(res){
         if(!res.ok){
           return res.json().catch(function(){ return {}; }).then(function(body){
-            throw new Error(body.error || 'Не получилось создать оплату.');
+            throw new Error(body.error || 'Не получилось оформить заказ.');
           });
         }
         return res.json();
       })
       .then(function(data){
         // cart is intentionally left intact here — it's only cleared once
-        // success.html confirms Stripe actually completed the payment.
+        // the browser actually lands on success.html.
         window.location.href = data.url;
       })
       .catch(function(err){
