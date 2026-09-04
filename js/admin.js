@@ -121,7 +121,7 @@
         '<div class="admin-grid">' +
           '<label class="admin-span2">Название<input data-field="name" value="' + (item.name || '').replace(/"/g, '&quot;') + '"></label>' +
           '<label>Категория' + selectHTML('category', CATEGORY_OPTIONS, item.category || 'burgers') + '</label>' +
-          '<label>Цена, ₽<input type="number" min="0" step="1" data-field="price" value="' + (item.price != null ? item.price : '') + '"></label>' +
+          '<label>Цена, €<input type="number" min="0" step="0.01" data-field="price" value="' + (item.price != null ? item.price : '') + '"></label>' +
           '<label>Вес / объём<input data-field="weight" value="' + (item.weight || '').replace(/"/g, '&quot;') + '"></label>' +
           '<label>Острота' + selectHTML('heat', HEAT_OPTIONS, item.heat || 0) + '</label>' +
           '<label class="admin-span3">Описание под названием<input data-field="tag" value="' + (item.tag || '').replace(/"/g, '&quot;') + '"></label>' +
@@ -146,7 +146,7 @@
         category: get('category').value,
         name: get('name').value.trim(),
         tag: get('tag').value.trim(),
-        price: priceRaw === '' ? 0 : parseInt(priceRaw, 10),
+        price: priceRaw === '' ? 0 : Math.round(parseFloat(priceRaw) * 100) / 100,
         weight: get('weight').value.trim(),
         photo: get('photo').value.trim()
       };

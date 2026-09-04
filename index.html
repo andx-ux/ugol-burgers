@@ -355,7 +355,7 @@
     <div class="cart-empty" id="cart-empty">Пока пусто — добавьте что-нибудь из меню.</div>
     <div class="cart-items" id="cart-items"></div>
     <div class="cart-summary">
-      <div class="cart-total-row"><span>Итого</span><b id="cart-total">0 ₽</b></div>
+      <div class="cart-total-row"><span>Итого</span><b id="cart-total">0,00 €</b></div>
       <button type="button" class="btn btn-primary cart-full" id="cart-checkout-btn" disabled>Оформить заказ</button>
     </div>
   </div>
@@ -398,7 +398,7 @@
     </div>
     <p class="cart-note">Оплата при получении — наличными или картой курьеру/на кассе.</p>
     <div class="cart-summary">
-      <div class="cart-total-row"><span>Итого</span><b id="checkout-total">0 ₽</b></div>
+      <div class="cart-total-row"><span>Итого</span><b id="checkout-total">0,00 €</b></div>
       <button type="submit" class="btn btn-primary cart-full">Отправить заказ в Telegram</button>
     </div>
   </form>
@@ -432,7 +432,7 @@
       </div>
     </div>
     <div class="cart-summary">
-      <div class="cart-total-row"><span>Сумма</span><b id="item-sum">0 ₽</b></div>
+      <div class="cart-total-row"><span>Сумма</span><b id="item-sum">0,00 €</b></div>
       <button type="button" class="btn btn-primary cart-full" id="item-add-btn">Добавить в корзину</button>
     </div>
   </div>
@@ -440,6 +440,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="js/money.js"></script>
 <script src="js/menu-data.js"></script>
 <script src="js/script.js"></script>
 </body>

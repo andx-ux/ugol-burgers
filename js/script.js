@@ -108,7 +108,7 @@ function getItemMeta(id){
   if(!el) return null;
   return {
     name: el.getAttribute('data-name'),
-    price: parseInt(el.getAttribute('data-price'), 10)
+    price: parseFloat(el.getAttribute('data-price'))
   };
 }
 function getCartEntry(id){
@@ -126,10 +126,10 @@ function changeCartQty(id, delta){
 function cartCountTotal(){
   return Object.keys(cart).reduce(function(sum, id){ return sum + cart[id].qty; }, 0);
 }
-function cartPriceTotal(){
+function cartPriceTotalCents(){
   return Object.keys(cart).reduce(function(sum, id){
     var meta = getItemMeta(id);
-    return sum + (meta ? meta.price * cart[id].qty : 0);
+    return sum + (meta ? toCents(meta.price) * cart[id].qty : 0);
   }, 0);
 }
 function escapeHtml(str){
@@ -216,17 +216,17 @@ function renderCartDrawer(){
         '</div>' +
         (entry.comment ? '<div class="cart-item-comment">«' + escapeHtml(entry.comment) + '»</div>' : '') +
         '<div class="cart-item-bottom">' +
-          '<span class="cart-item-unit">' + meta.price + ' ₽ × ' + entry.qty + '</span>' +
+          '<span class="cart-item-unit">' + formatEUR(meta.price) + ' × ' + entry.qty + '</span>' +
           '<div class="stepper"><button type="button" class="cart-dec" data-id="' + id + '">−</button><span>' + entry.qty + '</span><button type="button" class="cart-inc" data-id="' + id + '">+</button></div>' +
-          '<span class="cart-item-sum">' + (meta.price * entry.qty) + ' ₽</span>' +
+          '<span class="cart-item-sum">' + formatCents(toCents(meta.price) * entry.qty) + '</span>' +
         '</div>' +
         '</div>';
     }).join('');
   }
 
-  var total = cartPriceTotal();
-  cartTotalEl.textContent = total + ' ₽';
-  checkoutTotalEl.textContent = total + ' ₽';
+  var totalCents = cartPriceTotalCents();
+  cartTotalEl.textContent = formatCents(totalCents);
+  checkoutTotalEl.textContent = formatCents(totalCents);
 }
 
 function renderCartAll(){
@@ -343,18 +343,18 @@ function initCart(){
 
   function buildOrderText(){
     var lines = ['Новый заказ — УГОЛЬ', ''];
-    var total = 0;
+    var totalCents = 0;
     Object.keys(cart).forEach(function(id){
       var meta = getItemMeta(id);
       if(!meta) return;
       var entry = cart[id];
-      var sum = meta.price * entry.qty;
-      total += sum;
-      var line = meta.name + ' × ' + entry.qty + ' — ' + sum + ' ₽';
+      var sumCents = toCents(meta.price) * entry.qty;
+      totalCents += sumCents;
+      var line = meta.name + ' × ' + entry.qty + ' — ' + formatCents(sumCents);
       if(entry.comment){ line += ' («' + entry.comment + '»)'; }
       lines.push(line);
     });
-    lines.push('', 'Итого: ' + total + ' ₽', '');
+    lines.push('', 'Итого: ' + formatCents(totalCents), '');
     lines.push('Имя: ' + nameInput.value.trim());
     lines.push('Телефон: ' + phoneInput.value.trim());
     lines.push('Получение: ' + (currentMethod === 'delivery' ? 'Доставка' : 'Самовывоз'));
@@ -432,7 +432,7 @@ function initItemDetail(){
 
   function updateQtyUI(){
     qtyEl.textContent = currentQty;
-    sumEl.textContent = (currentItem.price * currentQty) + ' ₽';
+    sumEl.textContent = formatCents(toCents(currentItem.price) * currentQty);
   }
 
   function openFor(id){

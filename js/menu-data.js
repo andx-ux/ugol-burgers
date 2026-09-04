@@ -31,7 +31,7 @@
       '<div class="menu-body">' +
         '<h3>' + item.name + '</h3>' +
         '<p class="tag">' + item.tag + '</p>' +
-        '<div class="row"><span class="price">' + item.price + ' ₽</span><span class="weight">' + item.weight + '</span></div>' +
+        '<div class="row"><span class="price">' + formatEUR(item.price) + '</span><span class="weight">' + item.weight + '</span></div>' +
         '<div class="cart-add" data-id="' + item.id + '" data-name="' + item.name + '" data-price="' + item.price + '"></div>' +
       '</div>' +
     '</div>';
