@@ -368,7 +368,7 @@
     </div>
     <div class="field">
       <label for="cf-phone">Телефон</label>
-      <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="+7 900 000-00-00" required>
+      <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="+994 70 000-00-00" required>
     </div>
     <div class="field">
       <span class="field-label">Получение</span>
@@ -396,18 +396,13 @@
       <label for="cf-comment">Комментарий к заказу</label>
       <input type="text" id="cf-comment" name="comment" placeholder="позвонить у входа, без сдачи с 1000...">
     </div>
-    <p class="cart-note">Оплата при получении — наличными или картой курьеру/на кассе.</p>
+    <p class="cart-note">Безопасная оплата картой через Stripe — Visa, Mastercard, Apple Pay, Google Pay.</p>
+    <p class="checkout-error" id="checkout-error" hidden></p>
     <div class="cart-summary">
       <div class="cart-total-row"><span>Итого</span><b id="checkout-total">0,00 €</b></div>
-      <button type="submit" class="btn btn-primary cart-full">Отправить заказ в Telegram</button>
+      <button type="submit" class="btn btn-primary cart-full" id="cart-pay-btn">Оплатить картой</button>
     </div>
   </form>
-
-  <div class="cart-panel" id="cart-panel-done" hidden>
-    <p class="cart-done-text">Заказ сформирован. В открывшемся окне Telegram нажмите «Отправить» — и мы начнём готовить.</p>
-    <button type="button" class="btn btn-ghost cart-full" id="cart-copy-btn">Скопировать текст заказа</button>
-    <button type="button" class="btn btn-primary cart-full" id="cart-new-btn">Новый заказ</button>
-  </div>
 </aside>
 
 <div class="cart-overlay" id="item-overlay" hidden></div>

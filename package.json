@@ -1,0 +1,9 @@
+{
+  "name": "ugol-burgers",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Сайт бургерной УГОЛЬ — статика + серверлесс-функции Stripe на Vercel.",
+  "dependencies": {
+    "stripe": "^17.7.0"
+  }
+}

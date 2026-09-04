@@ -512,7 +512,10 @@ footer{background:var(--char-2);border-top:1px solid var(--line);padding:68px 0 
   box-shadow:var(--shadow);white-space:nowrap;
 }
 .toast.show{opacity:1;transform:translate(-50%,0);}
-.cart-done-text{color:var(--paper-dim);font-size:0.95rem;line-height:1.5;}
+.checkout-error{
+  color:var(--fire-soft);background:rgba(217,67,46,0.1);border:1px solid var(--fire);
+  border-radius:8px;padding:10px 12px;font-size:0.86rem;
+}
 
 @media (max-width:480px){
   .cart-drawer{width:100%;}

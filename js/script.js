@@ -236,9 +236,6 @@ function renderCartAll(){
 
 /* ---------- CART DRAWER + CHECKOUT ---------- */
 function initCart(){
-  // TODO: замените на реальный username Telegram-аккаунта бургерной (без @)
-  var TELEGRAM_USERNAME = 'ugol_orders';
-
   var cartToggle = document.getElementById('cart-toggle');
   var cartOverlay = document.getElementById('cart-overlay');
   var cartDrawer = document.getElementById('cart-drawer');
@@ -248,7 +245,8 @@ function initCart(){
   var backBtn = document.getElementById('cart-back-btn');
   var panelItems = document.getElementById('cart-panel-items');
   var panelCheckout = document.getElementById('cart-panel-checkout');
-  var panelDone = document.getElementById('cart-panel-done');
+  var payBtn = document.getElementById('cart-pay-btn');
+  var checkoutError = document.getElementById('checkout-error');
   var addressField = document.getElementById('cf-address-field');
   var addressInput = document.getElementById('cf-address');
   var nameInput = document.getElementById('cf-name');
@@ -258,15 +256,12 @@ function initCart(){
   var timeChips = document.querySelectorAll('#time-filters .chip');
   var timeField = document.getElementById('cf-time-field');
   var timeInput = document.getElementById('cf-time');
-  var copyBtn = document.getElementById('cart-copy-btn');
-  var newOrderBtn = document.getElementById('cart-new-btn');
   var clearBtn = document.getElementById('cart-clear-btn');
 
   if(!cartToggle || !cartDrawer) return;
 
   var currentMethod = 'pickup';
   var currentTimeMode = 'now';
-  var lastOrderText = '';
 
   document.addEventListener('click', function(e){
     var addBtn = e.target.closest('.cart-add-btn');
@@ -310,7 +305,7 @@ function initCart(){
   cartOverlay.addEventListener('click', closeDrawer);
 
   function showPanel(panel){
-    [panelItems, panelCheckout, panelDone].forEach(function(p){ p.hidden = (p !== panel); });
+    [panelItems, panelCheckout].forEach(function(p){ p.hidden = (p !== panel); });
   }
 
   checkoutBtn.addEventListener('click', function(){
@@ -341,70 +336,55 @@ function initCart(){
     });
   });
 
-  function buildOrderText(){
-    var lines = ['Новый заказ — УГОЛЬ', ''];
-    var totalCents = 0;
-    Object.keys(cart).forEach(function(id){
-      var meta = getItemMeta(id);
-      if(!meta) return;
-      var entry = cart[id];
-      var sumCents = toCents(meta.price) * entry.qty;
-      totalCents += sumCents;
-      var line = meta.name + ' × ' + entry.qty + ' — ' + formatCents(sumCents);
-      if(entry.comment){ line += ' («' + entry.comment + '»)'; }
-      lines.push(line);
-    });
-    lines.push('', 'Итого: ' + formatCents(totalCents), '');
-    lines.push('Имя: ' + nameInput.value.trim());
-    lines.push('Телефон: ' + phoneInput.value.trim());
-    lines.push('Получение: ' + (currentMethod === 'delivery' ? 'Доставка' : 'Самовывоз'));
-    if(currentMethod === 'delivery'){
-      lines.push('Адрес: ' + addressInput.value.trim());
-    }
-    lines.push('Время: ' + (currentTimeMode === 'later' && timeInput.value ? 'к ' + timeInput.value : 'как можно скорее'));
-    if(commentInput.value.trim()){
-      lines.push('Комментарий: ' + commentInput.value.trim());
-    }
-    return lines.join('\n');
+  function setPaying(paying){
+    payBtn.disabled = paying;
+    payBtn.textContent = paying ? 'Переходим к оплате…' : 'Оплатить картой';
   }
 
   panelCheckout.addEventListener('submit', function(e){
     e.preventDefault();
+    checkoutError.hidden = true;
     if(!panelCheckout.reportValidity()) return;
 
-    lastOrderText = buildOrderText();
-    var url = 'https://t.me/' + TELEGRAM_USERNAME + '?text=' + encodeURIComponent(lastOrderText);
-    window.open(url, '_blank', 'noopener');
+    var payload = {
+      items: Object.keys(cart).map(function(id){
+        return {id: id, qty: cart[id].qty, comment: cart[id].comment || ''};
+      }),
+      contact: {
+        name: nameInput.value.trim(),
+        phone: phoneInput.value.trim(),
+        method: currentMethod,
+        address: currentMethod === 'delivery' ? addressInput.value.trim() : '',
+        timeMode: currentTimeMode,
+        time: currentTimeMode === 'later' ? timeInput.value : '',
+        comment: commentInput.value.trim()
+      }
+    };
 
-    cart = {};
-    persistCart();
-    renderCartAll();
-    showPanel(panelDone);
-  });
-
-  copyBtn.addEventListener('click', function(){
-    if(!lastOrderText) return;
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(lastOrderText).then(function(){
-        copyBtn.textContent = 'Скопировано';
-        setTimeout(function(){ copyBtn.textContent = 'Скопировать текст заказа'; }, 1800);
-      }).catch(function(){});
-    }
-  });
-
-  newOrderBtn.addEventListener('click', function(){
-    panelCheckout.reset();
-    methodChips.forEach(function(c){ c.classList.remove('active'); });
-    methodChips[0].classList.add('active');
-    currentMethod = 'pickup';
-    addressField.hidden = true;
-    addressInput.required = false;
-    timeChips.forEach(function(c){ c.classList.remove('active'); });
-    timeChips[0].classList.add('active');
-    currentTimeMode = 'now';
-    timeField.hidden = true;
-    timeInput.required = false;
-    showPanel(panelItems);
+    setPaying(true);
+    fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    })
+      .then(function(res){
+        if(!res.ok){
+          return res.json().catch(function(){ return {}; }).then(function(body){
+            throw new Error(body.error || 'Не получилось создать оплату.');
+          });
+        }
+        return res.json();
+      })
+      .then(function(data){
+        // cart is intentionally left intact here — it's only cleared once
+        // success.html confirms Stripe actually completed the payment.
+        window.location.href = data.url;
+      })
+      .catch(function(err){
+        setPaying(false);
+        checkoutError.textContent = err.message || 'Не получилось перейти к оплате. Попробуйте ещё раз.';
+        checkoutError.hidden = false;
+      });
   });
 }
 
